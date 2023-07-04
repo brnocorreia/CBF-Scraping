@@ -18,7 +18,7 @@ def download_pdf_file(url: str) -> bool:
     response = requests.get(url, stream=True)
 
     # isolate PDF filename from URL
-    pdf_file_name = ("jogo" + os.path.basename(url)[3:]).replace("b","")
+    pdf_file_name = ("jogo_" + os.path.basename(url)[3:]).replace("b","")
     if response.status_code == 200:
         # Save in PDF_FOLDER_PATH
         path = PDF_FOLDER_PATH
@@ -26,6 +26,7 @@ def download_pdf_file(url: str) -> bool:
         with open(filepath, 'wb') as pdf_object:
             pdf_object.write(response.content)
             print(f'{pdf_file_name} was successfully saved!')
+            pdf_object.close()
             return True
     else:
         print(f'Uh oh! Could not download {pdf_file_name},')

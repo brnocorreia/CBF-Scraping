@@ -1,4 +1,5 @@
 import pandas as pd
+import pdfquery
 
 
 def pdfscrape_pattern1(pdf, pagecount):
