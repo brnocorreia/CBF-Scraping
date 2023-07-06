@@ -13,13 +13,14 @@ load_dotenv()
 
 PDF_FOLDER_PATH = os.getenv("PDF_FOLDER_PATH")
 
-partidas = [129, 9, 109, 107, 110]
+partidas = list(range(1,41))
 
-colunas = ['Competição', 'Rodada', 'Partida', 'Mandante', 'Visitante', 'Pagantes', 'Renda']
-tabela_publico = pd.DataFrame(columns=colunas)
+colunas = ['Competição', 'Rodada', 'Partida', 'Mandante', 'Visitante', 'Ingressos Disponíveis','Pagantes', 'Renda']
+tabela_publico_baianao = pd.DataFrame(columns=colunas)
 
 for partida in partidas:
-    URL = f'https://conteudo.cbf.com.br/sumulas/2023/142{partida}b.pdf'
+    partida = partida + 58
+    URL = f'https://conteudo.cbf.com.br/federacoes/25/borderos/2023/246{partida}b.pdf'
     download_pdf_file(URL)
 
     path = PDF_FOLDER_PATH
@@ -29,14 +30,14 @@ for partida in partidas:
         pdf.tree.write(f'boletim_{partida}.txt', pretty_print = True)
 
         pagecount = pdf.doc.catalog['Pages'].resolve()['Count']
-        for p in range(pagecount - 1):
+        for p in range(pagecount):
             pdf.load(p)
             page_jogo = pdfscrape_infojogo_pattern1(pdf) 
             
         page_publico = pdfscrape_infopublico_pattern1(pdf_path)
 
         page_merged = pd.concat([page_jogo, page_publico], axis=1)
-        tabela_publico = tabela_publico.append(page_merged, ignore_index=True).sort_values('Partida')
+        tabela_publico_baianao = tabela_publico_baianao.append(page_merged, ignore_index=True).sort_values('Partida')
     
     remove_pdf_path = os.path.join(PDF_FOLDER_PATH, f'jogo_{partida}.pdf')
     remove_boletim_path = os.path.join(os.getcwd(), f'boletim_{partida}.txt')
@@ -45,8 +46,8 @@ for partida in partidas:
     
 # tabela_publico = tabela_publico.reset_index(drop=True, inplace=True)
 
-if(os.path.exists('C:/src/python/CBF-Scraping/tabela_publico/tabela_publico.csv')):
-    tabela_publico.to_csv('C:/src/python/CBF-Scraping/tabela_publico/tabela_publico.csv', mode='a',header=False, index=False)
+if(os.path.exists('C:/src/python/CBF-Scraping/tabela_publico/tabela_publico_baianao.csv')):
+    tabela_publico_baianao.to_csv('C:/src/python/CBF-Scraping/tabela_publico/tabela_publico_baianao.csv', mode='a',header=False, index=False)
 else: 
-    tabela_publico.to_csv('C:/src/python/CBF-Scraping/tabela_publico/tabela_publico.csv', mode='a',header=True, index=False)
+    tabela_publico_baianao.to_csv('C:/src/python/CBF-Scraping/tabela_publico/tabela_publico_baianao.csv', mode='a',header=True, index=False)
 

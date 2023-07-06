@@ -84,10 +84,12 @@ def pdfscrape_infopublico_pattern1(pdf_path):
 
   df = df[df['INGRESSOS'] == 'TOTAL']
 
+  ingressos_disponiveis = df['DISPONÍVEL'].iloc[-1]
   publico_pagante = df['VENDIDOS'].iloc[-1]
   total_renda = df['ARRECADAÇÃO'].iloc[-1]
 
   page = pd.DataFrame({
+    'Ingressos Disponíveis': [ingressos_disponiveis],
     'Pagantes': [publico_pagante],
     'Renda': [total_renda],
   }, index=[0])
